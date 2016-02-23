@@ -49,11 +49,11 @@ class test_spellChecker(unittest.TestCase):
     
     def test_findWordInDictionary(self):
         #checks to make sure a known word is recorded as in the dictionary
-        self.assertEqual(True, findWordInDictionary("you", "test_dictionary.txt"))
-        #checks an additional word and capitalization
+        self.assertEqual(True, findWordInDictionary("you", self.test_dictionary))
+        #checks an additional word and capitalization and open/close status
         self.assertEqual(True, findWordInDictionary("Animals", "test_dictionary.txt"))
         #checks to make sure punctuation has been removed
-        self.assertEqual(True, findWordInDictionary("Animals,!", "test_dictionary.txt"))
+        self.assertEqual(True, findWordInDictionary("animals,!", "test_dictionary.txt"))
         #checks to make sure that correct values are returned when something isn't in the dictionary
         self.assertEqual(False, findWordInDictionary("rabid", "test_dictionary.txt"))
         #checks to make sure that the return value is accurate

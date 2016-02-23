@@ -63,8 +63,9 @@ def findWordInDictionary(word, fileName):
         checks to see if a word is present in the dictionary (fileName)
         after applying the ignoreCaseandPunc function
     """
-    #opens the specified file
-    fileName = open(fileName, "r")
+    #opens the specified file if not already open
+    if type(fileName) != file:
+        fileName = open(fileName, "r")
     #runs ignoreCaseAndPunc on the word
     word = ignoreCaseAndPunc(word)
     #runs create_file_list on the opened file
@@ -390,17 +391,142 @@ def docu_correction(fileName):
     write_new_file = open("corrected_file.txt", "w")
     #creates a list of words from the file
     file_words = create_file_list(fileName)
+    #loops through each word
     for word in file_words:
+        dictionary = open("engDictionary.txt", "r")
+        #removes punctuation
         new_word = ignoreCaseAndPunc(word)
-        word_list = getCombinedWordSuggestions(new_word, "engDictionary.txt")
-        write_new_file.write(word_list[0])
-    
-    
+        #checks to see if the new_word exists in the dictionary
+        check = findWordInDictionary(word, dictionary)
+        if check == True:
+            write_new_file.write(new_word + " ")
+        else:
+            #takes the engDictionary.txt file and loops through the words to find the best match
+            word_list = getCombinedWordSuggestions(new_word, "engDictionary.txt")
+            if word_list != []:
+            #writes the new suggested word to the file
+                write_new_file.write(word_list[0]+" ")
+            else:
+                write_new_file.write(word + " ")
+        dictionary.close()
+    write_new_file.close()
+    fileName.close()
 
 def main():
-    ask_user_corr_file = raw_input("Which file would you like to have auto-corrected?\n")
-    docu_correction(ask_user_corr_file)
+    print "Welcome to the Spell Checker Program!"
+    #prompt for user to open the file to be corrected
+    user_sel_file = raw_input("Which file would you like to correct? Please include the file extension:\n")
+    #opens the selected file
+    user_file = open(user_sel_file, "r")
+    #records length of the file
+    user_file_l = len(user_sel_file)
+    #sets number to remove the last for elements
+    rem_ext = user_file_l - 4
+    #removes the last for elements, assumes a 4 element extension, such as .txt or .jpg
+    corr_user_file = user_sel_file[0:rem_ext]
+    #adds on the -chk.txt
+    corr_user_file = corr_user_file + "-chk.txt"
+    #opens a file with the new name to write to
+    corr_user_file_w = open(corr_user_file, "w")
+    #asks for a reference file to compare to
+    user_sel_ref = raw_input("Which reference file would you like to use? Please Include the file extension.\nIf you would like to use the default file please type, D.\n")
+    #sets D, as the defualt engDictionary otherwise uses the user input
+    if user_sel_ref == "D":
+        dictionary = "engDictionary.txt"
+    else:
+        dictionary = user_sel_ref
+    #creates a list of individual words from the user file
+    user_file_list = create_file_list(user_file)
+    #iterates through each word in the list
+    for word in user_file_list:
+        #opens the selected dictionary
+        dictionary_r = open(dictionary, "r")
+        #checks if the word exists in the dictionary, and if it does, appends it to the writable file
+        check = findWordInDictionary(word, dictionary)
+        if check == True:
+            corr_user_file_w.write(word + " ")
+        #finds alternatives from the dictionary if the word is mispelled
+        else:
+            options = getCombinedWordSuggestions(word, dictionary)
+            #as long as there are options
+            if options != []:
+                print "The word,", word, "is not spelled correctly."
+                print "The following are available suggestions:"
+                #converts the options to a user friendly output
+                prettyPrint(options)
+                #asks the user what they want to do
+                user_option = raw_input("Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n")
+                #makes sure the input makes sense
+                while user_option != "r" and user_option != "a" and user_option != "t":
+                    print "You have typed an incorrect key, please try again."
+                    user_option = raw_input("Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n")
+                #for the r-case, makes sure that the user uses a number that is allowed and then appends that to the writable file
+                if user_option == "r":
+                    user_option_2 = input("Select the number corresponding to the word you wish to replace:\n")
+                    while user_option_2 > len(options):
+                        print "You have typed an incorrect key, please try again"
+                        user_option_2 = input("Select the number corresponding to the word you wish to replace:\n")
+                    #adds the word to the file, note a space is added between each word    
+                    corr_user_file_w.write(options[user_option_2-1] + " ")
+                #accepts and adds the word to the file
+                elif user_option == "a":
+                    corr_user_file_w.write(word + " ")
+                #takes whatever input is given by the user and adds it to the file
+                elif user_option == "t":
+                    user_manual = raw_input("Please type the word you would like to enter instead:\n")
+                    corr_user_file_w.write(user_manual + " ")
+            else:
+                #similar to above with "r" option removed
+                print "The word,", word, "is not spelled correctly."
+                print "There are 0 suggestions in the dictinary available."
+                user_option_3 = raw_input("Press ""a"" for accept as is, ""t"" for type in manually\n")
+                while user_option_3 != "a" and user_option_3 != "t":
+                    print "You have typed an incorrect key, please try again."
+                    user_option_3 = raw_input("Press ""a"" for accept as is, ""t"" for type in manually\n")
+                if user_option == "a":
+                    corr_user_file_w.write(word + " ")
+                elif user_option == "t":
+                    user_manual = raw_input("Please type the word you would like to enter instead:\n")
+                    corr_user_file_w.write(user_manual + " ")
+        #closes the reference dictionary            
+        dictionary_r.close()
+    #closes the original user file    
+    user_file.close()
+    #closes the writable file
+    corr_user_file_w.close()
     
 if __name__ == '__main__':
     main()
     
+
+    
+"""
+WHY DOES THE BELOW CAUSE THE DICTIONARY TO BECOME EMPTY UPON ITERATION?
+def main():
+    print "Welcome to the Spell Checker Program!"
+    user_sel_file = raw_input("Which file would you like to correct? Please include the file extension:\n")
+    user_file = open(user_sel_file, "r")
+    user_file_l = len(user_sel_file)
+    rem_ext = user_file_l - 4
+    corr_user_file = user_sel_file[0:rem_ext]
+    corr_user_file = corr_user_file + "-chk.txt"
+    corr_user_file_w = open(corr_user_file, "w")
+    user_sel_ref = raw_input("Which reference file would you like to use? Please Include the file extension.\nIf you would like to use the default file please type, D.\n")
+    if user_sel_ref == "D":
+        dictionary = open("engDictionary.txt", "r")
+    else:
+        dictionary = open(user_sel_ref, "r")
+    user_file_list = create_file_list(user_file)
+    
+    for word in user_file_list:
+        check = findWordInDictionary(word, dictionary)
+        print check
+        if check == True:
+            corr_user_file_w.write(word)
+    dictionary.close()
+    user_file.close()
+    corr_user_file_w.close()
+    
+if __name__ == '__main__':
+    main()
+"""    
