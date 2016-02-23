@@ -483,9 +483,9 @@ def main():
                 while user_option_3 != "a" and user_option_3 != "t":
                     print "You have typed an incorrect key, please try again."
                     user_option_3 = raw_input("Press ""a"" for accept as is, ""t"" for type in manually\n")
-                if user_option == "a":
+                if user_option_3 == "a":
                     corr_user_file_w.write(word + " ")
-                elif user_option == "t":
+                elif user_option_3 == "t":
                     user_manual = raw_input("Please type the word you would like to enter instead:\n")
                     corr_user_file_w.write(user_manual + " ")
         #closes the reference dictionary            
