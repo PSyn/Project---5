@@ -1,5 +1,5 @@
 
-f = open("test_checker.txt", "r")
+
 def create_file_list(text_file):
     """takes an input file and splits it into a list of words"""
     #outputs a list with each line separated by the \n
@@ -28,7 +28,8 @@ def create_file_list(text_file):
             #sets another iteration value to go through that list
             iteration_2 = 0
             while iteration_2 < count_2:
-                #pulls out each word from each list and appends it to a new list
+                #pulls out each word from each list and
+                #appends it to a new list
                 for dictionary_word in dictionary_list:
                     dictionary_words.append(dictionary_word)
                     iteration_2 = iteration_2 + 1
@@ -104,8 +105,10 @@ def getWordsOfSimLength(word, fileName, n):
         iteration = 0
         #iterates within the specified range n
         while iteration < n:
-            #checks the length of the words against the specified range and appends them to word_list
-            if (dictionary_word_c == (length_1-iteration) or dictionary_word_c == (length_2+iteration)):
+            #checks the length of the words against the specified range
+            #and appends them to word_list
+            if (dictionary_word_c == (length_1-iteration) or
+                dictionary_word_c == (length_2+iteration)):
                 word_list.append(dictionary_word)
             iteration = iteration + 1
         if dictionary_word_c == l_word:
@@ -138,14 +141,16 @@ def getWordsWithSameStart(word, wordList, n):
                     check = True
                 else:
                     check = False
-                #if at any time a non-matching character appears, ends the iteration
-                #this avoids the last character matching and giving a True value
+                #if at any time a non-matching character appears, ends the
+                #iteration this avoids the last character matching
+                #and giving a True value
                 if check == False:
                     break
             #if no characters match check = False
             else:
                 check = False
-        #only if check = True for all the characters will a word be added to the list
+        #only if check = True for all the characters will a word be added
+        #to the list
         if check == True:
             #appends the word from wordList to the word_list list
             word_list.append(dictionary_word)
@@ -153,8 +158,8 @@ def getWordsWithSameStart(word, wordList, n):
         
 def getWordsWithCommonLetters(word, wordList, n):
     """
-        returns a list with words that have n amount or more letters in common
-        ignores repeat letters
+        returns a list with words that have n amount or more letters in
+        common ignores repeat letters
     """
     dictionary = wordList[:]
     #creates an empty list
@@ -174,16 +179,18 @@ def getWordsWithCommonLetters(word, wordList, n):
         for d_word_ch in dictionary_word:
             dictionary_word_ch.append(d_word_ch)
             dictionary_word_ch_set = set(dictionary_word_ch)
-        #as long as the minumum required number of common characters is not greater than the word itself
+        #as long as the minumum required number of common characters
+        #is not greater than the word itself
         if len(dictionary_word_ch) >= n and n != 0:
             #loops through each character in the set
             for char in dictionary_word_ch_set:
-                #checks to see if each character is in the set made from the word
+                #checks to see if each character is in the set made
+                #from the word
                 if char in word_ch:
                     #adds the character to a list 
                     ch_list.append(char)
-            #if the amount of characters is equal to or greater than the required amount the
-            #loaded list word is added to a new list
+            #if the amount of characters is equal to or greater than the
+            #required amount the loaded list word is added to a new list
             if len(ch_list) >= n:
                 word_list.append(dictionary_word)
     return word_list
@@ -191,9 +198,9 @@ def getWordsWithCommonLetters(word, wordList, n):
 
 def getSimilarityMetric(word1, word2):
     """
-        Returns two measures of similarity given two words and returns an average.
-        These are numbers of letters that match up going from left to right and
-        right to left.
+        Returns two measures of similarity given two words and returns an
+        average.  These are numbers of letters that match up going from
+        left to right and right to left.
     """
     #empty lists to hold characters
     ch_word1 =[]
@@ -259,17 +266,24 @@ def sortIn2D(tup1, tup2):
         return 1
 
 def getListOfFirstComponents(tupleList):
-    """takes in a list of tuples and returns a list with just the first components"""
+    """
+        takes in a list of tuples and returns a list with just the first
+        components
+    """
     #creates a list to store the new values
     new_list = []
-    #removes the first value from each tuple in the tupleList and adds it to the new_list
+    #removes the first value from each tuple in the tupleList and adds
+    #it to the new_list
     for a_tuple in tupleList:
         new_list.append(a_tuple[0])
         
     return new_list
     
 def getBestWords(SimilarityDictionary, n):
-    """Uses a similarity dictionary and outputs a list of the top n terms by sorting."""
+    """
+        Uses a similarity dictionary and outputs a list of the top n terms
+        by sorting.
+    """
     list_of_tuples = SimilarityDictionary.items()
     list_of_tuples.sort(sortIn2D, reverse=True)
     return getListOfFirstComponents(list_of_tuples)[0:n]
@@ -285,33 +299,37 @@ def getWordSuggestionsV1(word, fileName, n, commonPercent, topN):
     import math
     #finds the length of the given word
     l_word = len(word)
-    #uses the commonPercent that was input to determine the amount of letters that should be matched
+    #uses the commonPercent that was input to determine the amount of
+    #letters that should be matched
     commonPercent = (commonPercent/100.0)*l_word
-    #uses math.ceil to raise the value to the higher integer so that the threshold is preserved
+    #uses math.ceil to raise the value to the higher integer so that the
+    #threshold is preserved
     commonPercent = math.ceil(commonPercent)
     #returns commonPercent to an integer
     commonPercent = int(commonPercent)
     #creates an empty list in which the final words will be stored
     word_list = []
-    #uses the input word, the dictionary and the length argument to generate a list of
-    #words that satisfy the given arguments
+    #uses the input word, the dictionary and the length argument to
+    #generate a list of words that satisfy the given arguments
     length_list = getWordsOfSimLength(word, fileName, n)
     #opens the file
     fileName = open(fileName, "r")
     #creates a list of words from the file
     database = create_file_list(fileName)
     #same as above except for commonPercent argument
-    common_letter_list = getWordsWithCommonLetters(word, database, commonPercent)
+    common_letter_list = getWordsWithCommonLetters(word, database,
+                                                   commonPercent)
     #records the length of the database
     database_length = len(database)
-    #loops through words in the length_list and checks if they are in the common_letter_list
-    #if so, adds these words to the new word_list
+    #loops through words in the length_list and checks if they are iN the
+    #common_letter_list if so, adds these words to the new word_list
     for a_word in length_list:
         if a_word in common_letter_list:
             word_list.append(a_word)
     #new list called final_list
     final_list = []
-    #defines indices that will be added to the final list with given boundary conditins
+    #defines indices that will be added to the final list with given
+    #boundary conditins
     if topN - 1 < len(word_list):
         for index in range(0, topN):
             final_list.append(word_list[index])
@@ -325,8 +343,9 @@ def getWordSuggestionsV1(word, fileName, n, commonPercent, topN):
 def getWordSuggestionsV2(word, fileName, n, topN):
     """
         If the input is an incorrect word, provides a list of words from
-        fileName, finds words +/- one in length.  Words that begin/end with the same
-        n letters. Generates list and orders the list and returns the topN words.
+        fileName, finds words +/- one in length.  Words that begin/end
+        with the same n letters. Generates list and orders the list
+        and returns the topN words.
     """
     length_list = getWordsOfSimLength(word, fileName, 1)
     #opens the file
@@ -338,14 +357,17 @@ def getWordSuggestionsV2(word, fileName, n, topN):
     #reverses the original word
     reverse_word = word[-1::-1]
     new_database = []
-    #for each word in the database list, reverses the word and adds it to new_database
+    #for each word in the database list, reverses the word and adds
+    #it to new_database
     for dictionary_word in database:
         reverse_dictionary_word = dictionary_word[-1::-1]
         new_database.append(reverse_dictionary_word)
-    #compares the reversed word to the reversed database, effectively comparing ends
+    #compares the reversed word to the reversed database, effectively
+    #comparing ends
     end_list = getWordsWithSameStart(reverse_word, new_database, n)
     new_end_list = []
-    #unreverses the newly created list so that it can be compared to the other lists
+    #unreverses the newly created list so that it can be compared to
+    #the other lists
     for end_words in end_list:
         reverse_end_word = end_words[-1::-1]
         new_end_list.append(reverse_end_word)
@@ -354,7 +376,8 @@ def getWordSuggestionsV2(word, fileName, n, topN):
     for a_word in start_list:
         if a_word in new_end_list and a_word in length_list:
             word_list.append(a_word)
-    #creates a final list according the the getBestWords function and a newly created Similarity dictionary
+    #creates a final list according the the getBestWords function and a
+    #newly created Similarity dictionary
     final_list = getBestWords((getSimilarityDict(word, word_list)), topN)
     return final_list
     
@@ -374,7 +397,8 @@ def getCombinedWordSuggestions(word, fileName):
     new_list = set(lst2)
     #copies the set into a new list
     prerank_list = lst2[:]
-    #ranks the list according tot he getBestWords function using a newly created similarity dictionary
+    #ranks the list according tot he getBestWords function using a
+    #newly created similarity dictionary
     ranked_list = getBestWords((getSimilarityDict(word, prerank_list)), 10)
     return ranked_list
 
@@ -401,8 +425,10 @@ def docu_correction(fileName):
         if check == True:
             write_new_file.write(new_word + " ")
         else:
-            #takes the engDictionary.txt file and loops through the words to find the best match
-            word_list = getCombinedWordSuggestions(new_word, "engDictionary.txt")
+            #takes the engDictionary.txt file and loops through the words
+            #to find the best match
+            word_list = getCombinedWordSuggestions(new_word,
+                                                   "engDictionary.txt")
             if word_list != []:
             #writes the new suggested word to the file
                 write_new_file.write(word_list[0]+" ")
@@ -422,14 +448,15 @@ def main():
     user_file_l = len(user_sel_file)
     #sets number to remove the last for elements
     rem_ext = user_file_l - 4
-    #removes the last for elements, assumes a 4 element extension, such as .txt or .jpg
+    #removes the last for elements, assumes a 4 element extension, \
+    #such as .txt or .jpg
     corr_user_file = user_sel_file[0:rem_ext]
     #adds on the -chk.txt
     corr_user_file = corr_user_file + "-chk.txt"
     #opens a file with the new name to write to
     corr_user_file_w = open(corr_user_file, "w")
     #asks for a reference file to compare to
-    user_sel_ref = raw_input("Which reference file would you like to use? Please Include the file extension.\nIf you would like to use the default file please type, D.\n")
+    user_sel_ref = raw_input("""Which reference file would you like to use? Please Include the file extension.\nIf you would like to use the default file please type, D.\n""")
     #sets D, as the defualt engDictionary otherwise uses the user input
     if user_sel_ref == "D":
         dictionary = "engDictionary.txt"
@@ -441,7 +468,8 @@ def main():
     for word in user_file_list:
         #opens the selected dictionary
         dictionary_r = open(dictionary, "r")
-        #checks if the word exists in the dictionary, and if it does, appends it to the writable file
+        #checks if the word exists in the dictionary, and if it does,
+        #appends it to the writable file
         check = findWordInDictionary(word, dictionary)
         if check == True:
             corr_user_file_w.write(word + " ")
@@ -455,23 +483,28 @@ def main():
                 #converts the options to a user friendly output
                 prettyPrint(options)
                 #asks the user what they want to do
-                user_option = raw_input("Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n")
+                user_option = raw_input("""Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n""")
                 #makes sure the input makes sense
-                while user_option != "r" and user_option != "a" and user_option != "t":
-                    print "You have typed an incorrect key, please try again."
-                    user_option = raw_input("Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n")
-                #for the r-case, makes sure that the user uses a number that is allowed and then appends that to the writable file
+                while (user_option != "r" and user_option != "a" and
+                user_option != "t"):
+                    print """You have typed an incorrect key, please try again."""
+                    user_option = raw_input("""Press ""r"" for replace, ""a"" for accept as is, ""t"" for type in manually\n""")
+                #for the r-case, makes sure that the user uses a number that
+                #is allowed and then appends that to the writable file
                 if user_option == "r":
-                    user_option_2 = input("Select the number corresponding to the word you wish to replace:\n")
+                    user_option_2 = input("""Select the number corresponding to the word you wish to replace:\n""")
                     while user_option_2 > len(options):
-                        print "You have typed an incorrect key, please try again"
-                        user_option_2 = input("Select the number corresponding to the word you wish to replace:\n")
-                    #adds the word to the file, note a space is added between each word    
+                        print """You have typed an incorrect key, please try
+                                again"""
+                        user_option_2 = input("""Select the number corresponding to the word you wish to replace:\n""")
+                    #adds the word to the file, note a space is added between
+                    #each word    
                     corr_user_file_w.write(options[user_option_2-1] + " ")
                 #accepts and adds the word to the file
                 elif user_option == "a":
                     corr_user_file_w.write(word + " ")
-                #takes whatever input is given by the user and adds it to the file
+                #takes whatever input is given by the user and adds it to the
+                #file
                 elif user_option == "t":
                     user_manual = raw_input("Please type the word you would like to enter instead:\n")
                     corr_user_file_w.write(user_manual + " ")
